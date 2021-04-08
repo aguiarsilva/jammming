@@ -1,5 +1,5 @@
 const clientId = 'deea8a847df44d8daee632b383befc9a';
-const redirectUri = 'http://localhost:3000';
+const redirectUri = 'http://playlistmaker.surge.sh';
 
 let accessToken;
 
