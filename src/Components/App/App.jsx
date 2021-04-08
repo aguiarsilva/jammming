@@ -2,15 +2,18 @@ import React from 'react';
 import SearchBar from '../SearchBar/SearchBar';
 import SearchResults from '../SearchResults/SearchResults';
 import Playlist from '../Playlist/Playlist';
-import './App.css';
 import '../../util/Spotify';
+
+import './App.css';
+import Spotify from '../../util/Spotify';
+
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { searchResults: ['name', 'artist', 'album', 'id'],
+        this.state = { searchResults: [],
                        playlistName: '',
-                       playlistTracks: ['name', 'artist', 'album', 'id']
+                       playlistTracks: [],
                      }
         this.addTrack = this.addTrack.bind(this);
         this.removeTrack = this.removeTrack.bind(this);
@@ -19,15 +22,23 @@ class App extends React.Component {
         this.search = this.search.bind(this);
     }
 
+    componentDidMount(){
+        window.addEventListener('load', () => {Spotify.getAccessToken()});
+    }
+
     addTrack(track) {
-        if(this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)){
+        let playlistTracks = this.state.playlistTracks;
+        if(this.state.playlistTracks.find(playlistTrack => playlistTrack.id === track.id)){
             return;
         }
+        playlistTracks.push(track);
+        this.setState({playlistTracks: playlistTracks});
     }
 
     removeTrack(track) {
-        this.state.playlistTracks.filter(playlistTrack => playlistTrack.id !== track.id)
-        this.setState = ({ playlistTracks: this.state.playlistTracks });
+        let playlistTracks = this.state.playlistTracks;
+        playlistTracks = playlistTracks.filter(playlistTrack => playlistTrack.id !== track.id)
+        this.setState = ({ playlistTracks: playlistTracks });
     }
 
     updatePlaylistName(name) {
@@ -43,7 +54,7 @@ class App extends React.Component {
             playlistName: 'New Playlist',
             playlistTracks: [],
         });
-        document.querySelectorAll('input')[1].value='New Playlist';  
+        document.querySelectorAll('input')[1].value = 'New Playlist';  
     }
 
     search(term) {
@@ -69,7 +80,7 @@ class App extends React.Component {
             </div> 
             </div> 
             </div>
-        );
+        )
     }
 
 }
