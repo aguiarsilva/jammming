@@ -35,3 +35,9 @@
     font-weight: 300;
     color: rgba(256, 256, 256, 0.8);
 }
+
+.Track-information audio {
+    padding: .22rem;
+    max-height: 30%;
+    max-width: 70%;
+}

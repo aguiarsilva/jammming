@@ -1,20 +1,21 @@
 import React from 'react';
+import './App.css';
+
 import SearchBar from '../SearchBar/SearchBar';
 import SearchResults from '../SearchResults/SearchResults';
 import Playlist from '../Playlist/Playlist';
-import '../../util/Spotify';
 
-import './App.css';
 import Spotify from '../../util/Spotify';
 
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { searchResults: [],
-                       playlistName: '',
+        this.state = { 
+                       searchResults: [],
+                       playlistName: 'New Playlist',
                        playlistTracks: [],
-                     }
+                     };
         this.addTrack = this.addTrack.bind(this);
         this.removeTrack = this.removeTrack.bind(this);
         this.updatePlaylistName = this.updatePlaylistName.bind(this);
@@ -28,7 +29,7 @@ class App extends React.Component {
 
     addTrack(track) {
         let playlistTracks = this.state.playlistTracks;
-        if(this.state.playlistTracks.find(playlistTrack => playlistTrack.id === track.id)){
+        if(playlistTracks.find(playlistTrack => playlistTrack.id === track.id)){
             return;
         }
         playlistTracks.push(track);
@@ -48,14 +49,17 @@ class App extends React.Component {
     savePlaylist() {
         const trackUri = this.state.playlistTracks.map(track => track.uri);
         //Update the method to call Spotify.savePlaylist()
-        Spotify.savePlaylist(this.state.playlistName, trackUri);
+        Spotify.savePlaylist(this.state.playlistName, trackUri).then(() => {
         //Reset the state of playlist name to New Playlist and playlist tracks to an empty array
         this.setState({
             playlistName: 'New Playlist',
-            playlistTracks: [],
+            playlistTracks: []
         });
-        document.querySelectorAll('input')[1].value = 'New Playlist';  
-    }
+        } 
+        
+        )
+       
+        }
 
     search(term) {
         Spotify.search(term).then(searchResults => this.setState({searchResults: searchResults}));
@@ -69,7 +73,9 @@ class App extends React.Component {
                 <SearchBar 
                 onSearch={this.search} />
             <div className = "App-playlist" >
-                <SearchResults searchResults={this.state.searchResults} 
+                <SearchResults 
+                searchResults={this.state.searchResults}
+                playlistTracks={this.state.playlistTracks} 
                 onAdd={this.addTrack} />
                 <Playlist 
                 playlistName={this.state.playlistName} 

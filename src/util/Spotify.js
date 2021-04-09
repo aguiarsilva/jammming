@@ -40,15 +40,13 @@ const Spotify = {
                 return [];
             }
 
-            return jsonResponse.tracks.items.map(track => {
-                return {
+            return jsonResponse.tracks.items.map(track =>({
                     id: track.id,
                     name: track.name,
                     artist: track.artist[0].name,
                     album: track.album.name,
                     uri: track.uri,
-                }
-            });
+                }));
             });
         },
 
@@ -61,24 +59,24 @@ const Spotify = {
             const headers = { Authorization: `Bearer ${accessToken}` };
             let userId;
 
-            return fetch('https://api.spotify.com/v1/me', {headers: headers}).then(response => {
-                return response.json()}).then(jsonResponse => {
+            return fetch('https://api.spotify.com/v1/me', {headers: headers}).then(response => response.json())
+            .then(jsonResponse => {
                     userId = jsonResponse.id;
-                    return fetch('https://api.spotify.com/v1/users/{user_id}/playlists', {
+                    return fetch('https://api.spotify.com/v1/users/${user_id}/playlists', {
                         headers: headers,
                         method: 'POST',
                         body: JSON.stringify({name: playlistName}),
-                    }).then(response => {
-                        return response.json()}).then(jsonResponse => {
+                    }).then(response => response.json())
+                    .then(jsonResponse => {
                             const playlistId = jsonResponse.id;
-                            return fetch('https://api.spotify.com//v1/users/{user_id}/playlists/{playlist_id}/tracks', {
+                            return fetch('https://api.spotify.com//v1/users/${user_id}/playlists/${playlist_id}/tracks', {
                                 headers: headers,
                                 method: 'POST',
                                 body: JSON.stringify({uris: trackUri}),
-                            })
-                        })
-                })
-        },
-    }
+                            });
+                        });
+                });
+        }
+    };
 
     export default Spotify;
