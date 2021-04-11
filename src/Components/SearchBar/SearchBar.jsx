@@ -5,6 +5,7 @@ import './SearchBar.css';
 class SearchBar extends React.Component {
     constructor(props) {
         super(props);
+
         this.state={
             term: '',
         };
@@ -24,7 +25,7 @@ class SearchBar extends React.Component {
 
     //IF press enter the search button is activated
     handleSearchByPressEnter (e) {
-        if(e.keyCode ===13) {
+        if(e.keyCode === 13) {
             e.preventDefault();
             this.search();
         }
@@ -39,7 +40,7 @@ class SearchBar extends React.Component {
                 <button className="SearchButton" 
                 onClick={this.search}>SEARCH</button>
             </div>
-        )
+        );
     }
 }
 

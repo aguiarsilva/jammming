@@ -6,17 +6,17 @@ let accessToken;
 const Spotify = {
         getAccessToken() {
             if (accessToken) {
-                return accessToken
+                return accessToken;
             }
 
         //Checks for the accessToken Match and ExpiryDate match
         const accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
-        const expiryDateCheck = window.location.href.match(/expires_in=([^&]*)/);
+        const expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
 
         //set the access token value and variable for expiration time - acces token should expire at the value of expiration time
-        if (accessTokenMatch && expiryDateCheck) {
+        if (accessTokenMatch && expiresInMatch) {
             accessToken = accessTokenMatch[1];
-            const expiresIn = Number(expiryDateCheck[1]);
+            const expiresIn = Number(expiresInMatch[1]);
 
             //Clear the parameters from the URL
             window.setTimeout(() => accessToken = '', expiresIn * 1000);
@@ -34,25 +34,25 @@ const Spotify = {
 
             return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, { headers: headers })
             .then(response => {
-                return response.json()})
-            .then(jsonResponse => {
-                if(!jsonResponse.tracks) {
+                return response.json();
+            }).then(jsonResponse => {
+                if (!jsonResponse.tracks) {
                 return [];
             }
 
             return jsonResponse.tracks.items.map(track => ({
                     id: track.id,
                     name: track.name,
-                    artist: track.artist[0].name,
+                    artist: track.artists[0].name,
                     album: track.album.name,
                     uri: track.uri,
-                })
-                );
+                    preview: track.preview_url,
+                }));
             });
         },
 
-        savePlaylist(playlistName, trackUri) {
-            if(!playlistName || !trackUri.length) {
+        savePlaylist(playlistName, trackUris) {
+            if(!playlistName || !trackUris.length) {
                 return;
             }
 
@@ -60,7 +60,8 @@ const Spotify = {
             const headers = { Authorization: `Bearer ${accessToken}` };
             let userId;
 
-            return fetch('https://api.spotify.com/v1/me', {headers: headers}).then(response => response.json())
+            return fetch('https://api.spotify.com/v1/me', {headers: headers})
+            .then(response => response.json())
             .then(jsonResponse => {
                     userId = jsonResponse.id;
                     return fetch('https://api.spotify.com/v1/users/${user_id}/playlists', {
@@ -73,7 +74,7 @@ const Spotify = {
                             return fetch('https://api.spotify.com//v1/users/${user_id}/playlists/${playlist_id}/tracks', {
                                 headers: headers,
                                 method: 'POST',
-                                body: JSON.stringify({uris: trackUri}),
+                                body: JSON.stringify({uris: trackUris}),
                             });
                         });
                 });
