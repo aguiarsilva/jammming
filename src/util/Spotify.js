@@ -40,13 +40,14 @@ const Spotify = {
                 return [];
             }
 
-            return jsonResponse.tracks.items.map(track =>({
+            return jsonResponse.tracks.items.map(track => ({
                     id: track.id,
                     name: track.name,
                     artist: track.artist[0].name,
                     album: track.album.name,
                     uri: track.uri,
-                }));
+                })
+                );
             });
         },
 
